@@ -15,7 +15,7 @@ class MeuAppDiario extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF003366), // Azul escuro corporativo
+          seedColor: const Color(0xFF003366),
           brightness: Brightness.light,
         ),
         useMaterial3: true,
