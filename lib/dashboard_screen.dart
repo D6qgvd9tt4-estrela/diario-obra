@@ -35,9 +35,7 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          // Futura navegação para tela de lançamento
-        },
+        onPressed: () {},
         label: const Text('Lançar CBUQ'),
         icon: const Icon(Icons.add),
         backgroundColor: const Color(0xFF003366),
