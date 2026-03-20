@@ -5,6 +5,12 @@ on:
     branches:
       - main
 
+# Permissões necessárias para publicar o site
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   build_android:
     name: Gerar Android (APK)
@@ -12,26 +18,53 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Configurar Java 17
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
-
       - name: Configurar Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
       - name: Baixar dependências
         run: flutter pub get
-
       - name: Gerar APK
         run: flutter build apk --release
-
       - name: Salvar APK
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+  build_web:
+    name: Gerar Versão Web (PWA)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Baixar dependências
+        run: flutter pub get
+      - name: Gerar Web (PWA)
+        # O base-href precisa ter o nome exato do seu repositório
+        run: flutter build web --release --base-href "/diario-obra/"
+      - name: Preparar arquivos do site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy_web:
+    name: Publicar na Internet
+    needs: build_web
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
